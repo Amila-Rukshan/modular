@@ -693,6 +693,22 @@ def test_find() raises:
 
     assert_equal(-1, String("abc").find("abcd"))
 
+    # Empty substring respects `start` (issue #7446).
+    var abc = String("abc")
+    assert_equal(abc.find("", 0), 0)
+    assert_equal(abc.find("", 2), 2)
+    assert_equal(abc.find("", 3), 3)
+    assert_equal(abc.find("", 4), -1)
+    assert_equal(abc.find("", -1), 2)
+    assert_equal(abc.find("", -10), 0)
+    assert_equal(String().find(""), 0)
+    assert_equal(String().find("", 1), -1)
+
+    # Out-of-range `start` with a non-empty substring.
+    assert_equal(abc.find("c", 3), -1)
+    assert_equal(abc.find("c", 100), -1)
+    assert_equal(abc.find("abc", -10), 0)
+
 
 def test_replace() raises:
     # Replace empty
@@ -735,6 +751,22 @@ def test_rfind() raises:
     assert_equal(s1.rfind("w", -5), 6)
 
     assert_equal(-1, String("abc").rfind("abcd"))
+
+    # Empty substring respects `start` (issue #7446).
+    var abc = String("abc")
+    assert_equal(abc.rfind("", 0), 3)
+    assert_equal(abc.rfind("", 2), 3)
+    assert_equal(abc.rfind("", 3), 3)
+    assert_equal(abc.rfind("", 4), -1)
+    assert_equal(abc.rfind("", -1), 3)
+    assert_equal(abc.rfind("", -10), 3)
+    assert_equal(String().rfind(""), 0)
+    assert_equal(String().rfind("", 1), -1)
+
+    # Out-of-range `start` with a non-empty substring.
+    assert_equal(abc.rfind("a", 3), -1)
+    assert_equal(abc.rfind("a", 100), -1)
+    assert_equal(abc.rfind("abc", -10), 0)
 
     # Special characters.
     # TODO(#26444): Support unicode strings.

@@ -1861,17 +1861,21 @@ struct StringSpan[origin: ImmOrigin](
             The offset in bytes of `substr` relative to the beginning of the
             string.
         """
-        if not substr:
-            return 0
-
-        if self.byte_length() < substr.byte_length() + start:
-            return -1
-
-        # The substring to search within, offset from the beginning if `start`
-        # is positive, and offset from the end if `start` is negative.
+        # Normalize `start`: a negative value is an offset from
+        # the end of the string, clamped to the beginning.
         var start_byte = start if start >= 0 else max(
             start + self.byte_length(), 0
         )
+
+        if start_byte > self.byte_length():
+            return -1
+
+        if not substr:
+            return start_byte
+
+        if self.byte_length() - start_byte < substr.byte_length():
+            return -1
+
         var haystack = self.as_bytes()[start_byte:]
 
         var loc = _memmem(
@@ -1896,17 +1900,21 @@ struct StringSpan[origin: ImmOrigin](
             The offset in bytes of `substr` relative to the beginning of the
             string.
         """
-        if not substr:
-            return self.byte_length()
-
-        if self.byte_length() < substr.byte_length() + start:
-            return -1
-
-        # The substring to search within, offset from the beginning if `start`
-        # is positive, and offset from the end if `start` is negative.
+        # Normalize `start`: a negative value is an offset from
+        # the end of the string, clamped to the beginning.
         var start_byte = start if start >= 0 else max(
             start + self.byte_length(), 0
         )
+
+        if start_byte > self.byte_length():
+            return -1
+
+        if not substr:
+            return self.byte_length()
+
+        if self.byte_length() - start_byte < substr.byte_length():
+            return -1
+
         var haystack = self.as_bytes()[start_byte:]
 
         var loc = _memrmem(

@@ -222,3 +222,9 @@ This version is still a work in progress.
 
 - Fixed rejection of negative integer and floating-point literals in `match`
   patterns.
+
+- `String.find()` and `String.rfind()` (and the `StringSlice` and
+  `StringLiteral` versions) now respect `start` when searching for an empty
+  substring. `"abc".find("", 2)` now returns `2` instead of `0`, and a
+  `start` past the end of the string now returns `-1`.
+  ([Issue #7446](https://github.com/modular/modular/issues/7446))
